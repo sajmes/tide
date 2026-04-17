@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0c1822"/>
+  <path d="M40 320 Q120 270 200 320 T360 320 T520 320 V480 H40 Z" fill="#00d4aa" opacity="0.85"/>
+  <path d="M40 380 Q120 340 200 380 T360 380 T520 380 V480 H40 Z" fill="#00b890" opacity="0.95"/>
+  <path d="M40 430 Q120 405 200 430 T360 430 T520 430 V480 H40 Z" fill="#007a63"/>
+</svg>

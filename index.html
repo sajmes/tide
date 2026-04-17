@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1822">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tide">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <title>Tide — Surf Planner</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main id="app">
+
+  <header class="app-header">
+    <div class="header-left">
+      <h1 class="app-title">🌊 Tide</h1>
+      <span class="current-date" id="current-date"></span>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="btn-refresh" aria-label="Refresh">↻</button>
+      <button class="icon-btn" id="btn-settings" aria-label="Settings">⚙</button>
+    </div>
+  </header>
+
+  <section class="now-strip" id="now-strip"></section>
+
+  <section class="hero" id="hero"></section>
+
+  <section class="outlook-section">
+    <div class="outlook-header">
+      <h2 class="section-title">Next 7 Days</h2>
+      <select id="spot-filter" class="spot-filter">
+        <option value="all">All Spots (best)</option>
+      </select>
+    </div>
+    <div class="outlook-scroll">
+      <div id="outlook"></div>
+    </div>
+  </section>
+
+  <aside class="settings-panel" id="settings-panel" hidden>
+    <h2 class="settings-title">Preferences</h2>
+    <div class="settings-row">
+      <label>Waves (ft)</label>
+      <input type="number" id="pref-wave-min" min="0" max="20" step="0.5" value="1">
+      <span>–</span>
+      <input type="number" id="pref-wave-max" min="0" max="25" step="0.5" value="4">
+    </div>
+    <div class="settings-row">
+      <label>Wind tolerance</label>
+      <select id="pref-wind">
+        <option value="glassy">Glassy (&lt;5mph)</option>
+        <option value="light">Light (&lt;10mph)</option>
+        <option value="moderate">Moderate (&lt;15mph)</option>
+        <option value="any">Any</option>
+      </select>
+    </div>
+    <button class="btn-save" id="btn-save-prefs">Save</button>
+  </aside>
+
+</main>
+
+<script src="js/cache.js"></script>
+<script src="js/spots.js"></script>
+<script src="js/tides.js"></script>
+<script src="js/wind-swell.js"></script>
+<script src="js/surfline.js"></script>
+<script src="js/buoy.js"></script>
+<script src="js/scoring.js"></script>
+<script src="js/wetsuit.js"></script>
+<script src="js/describe.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('sw.js').catch(function() {});
+  }
+</script>
+</body>
+</html>

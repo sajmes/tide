@@ -1,0 +1,392 @@
+/* Tide — surf planner.
+   Layout: header / now-strip / hero (today + tomorrow) / 7-day outlook.
+   Mobile-first. PWA-friendly with safe-area insets. */
+
+:root {
+  --bg: #0c1822;
+  --bg-elev: #142331;
+  --bg-elev-2: #1c3144;
+  --border: #25415a;
+  --text: #e6edf3;
+  --text-dim: #8b9eb1;
+  --accent: #00d4aa;
+  --accent-dim: #007a63;
+  --green: #00d4aa;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --gray: #4b5563;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.is-loading { opacity: 0.7; }
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ----- Header ----- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+.header-left { display: flex; align-items: baseline; gap: 12px; }
+.app-title {
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 600;
+}
+.current-date {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.header-right { display: flex; gap: 8px; }
+.icon-btn {
+  background: var(--bg-elev);
+  color: var(--text);
+  border: 1px solid var(--border);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-btn:hover { background: var(--bg-elev-2); }
+
+/* ----- Now strip ----- */
+
+.now-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.now-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.now-label {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.now-val {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.now-buoy .now-val { color: var(--accent); }
+
+/* ----- Hero (Today + Tomorrow cards) ----- */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+}
+.hero-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.hero-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--gray);
+}
+.hero-card.rating-green::before { background: var(--green); }
+.hero-card.rating-yellow::before { background: var(--yellow); }
+.hero-card.rating-red::before { background: var(--red); }
+
+.hero-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.hero-spot {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.hero-time {
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.hero-phrase {
+  font-size: 1.0rem;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.hero-countdown {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.hero-countdown.hero-now {
+  color: var(--green);
+  font-weight: 600;
+}
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.hero-meta-item { display: inline-flex; gap: 4px; align-items: center; }
+
+.hero-empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 140px;
+}
+.hero-empty-msg {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ----- 7-day outlook ----- */
+
+.outlook-section {
+  padding: 0 16px 24px;
+}
+.outlook-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+.section-title {
+  font-size: 1.0rem;
+  margin: 0;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.spot-filter {
+  background: var(--bg-elev);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.outlook-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.outlook-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 4px;
+  table-layout: fixed;
+  min-width: 500px;
+}
+.outlook-table th,
+.outlook-table td {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+.outlook-day {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  padding: 6px 4px;
+  font-weight: 500;
+  background: var(--bg-elev);
+  border-radius: 6px;
+}
+.outlook-day.is-weekend {
+  background: var(--bg-elev-2);
+  color: var(--text);
+}
+.outlook-day.is-today {
+  outline: 2px solid var(--accent);
+}
+.outlook-dayname { font-weight: 600; }
+.outlook-daydate { font-size: 0.72rem; opacity: 0.7; }
+.outlook-corner { background: transparent; }
+.outlook-hour {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 500;
+  text-align: right;
+  padding-right: 8px;
+  min-width: 36px;
+}
+.outlook-cell {
+  height: 48px;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  background: var(--bg-elev);
+  transition: transform 0.1s ease;
+}
+.outlook-cell:hover { transform: scale(1.04); }
+.outlook-cell.cell-empty { background: var(--bg-elev); opacity: 0.4; cursor: default; }
+.outlook-cell.cell-empty:hover { transform: none; }
+.outlook-cell.cell-green { background: rgba(0, 212, 170, 0.85); color: #06231b; }
+.outlook-cell.cell-yellow { background: rgba(245, 158, 11, 0.85); color: #2a1a04; }
+.outlook-cell.cell-red { background: rgba(239, 68, 68, 0.85); color: #2a0606; }
+.outlook-cell-spot {
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.05;
+  padding: 1px 4px 0;
+}
+.outlook-cell-wave {
+  font-size: 0.68rem;
+  opacity: 0.9;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.outlook-cell-temp {
+  font-size: 0.62rem;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.0;
+}
+
+/* ----- Settings panel ----- */
+
+.settings-panel {
+  position: fixed;
+  top: 60px;
+  right: 12px;
+  width: 280px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  z-index: 20;
+}
+.settings-panel[hidden] { display: none; }
+.settings-title {
+  margin: 0 0 12px;
+  font-size: 1.0rem;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.settings-row label {
+  flex-basis: 100%;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+.settings-row input[type="number"],
+.settings-row select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  width: 70px;
+}
+.settings-row select { width: auto; flex: 1; }
+.btn-save {
+  width: 100%;
+  background: var(--accent);
+  color: #06231b;
+  border: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-save:hover { background: #00b890; }
+
+/* ----- Tooltip ----- */
+
+.tooltip {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  max-width: 280px;
+  box-shadow: var(--shadow);
+  z-index: 100;
+  font-size: 0.85rem;
+}
+.tt-spot { font-weight: 600; margin-bottom: 2px; }
+.tt-time { color: var(--accent); margin-bottom: 4px; }
+.tt-phrase { margin-bottom: 6px; }
+.tt-numbers { color: var(--text-dim); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.badge-surfline,
+.badge-predicted {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+  font-weight: 600;
+}
+.badge-surfline { background: var(--accent-dim); color: #fff; }
+.badge-predicted { background: #525252; color: #ddd; }
+
+/* ----- Mobile ----- */
+
+@media (max-width: 600px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-spot { font-size: 1.2rem; }
+  .now-strip { font-size: 0.85rem; gap: 10px; }
+  .outlook-cell { height: 44px; }
+  .outlook-cell-spot { font-size: 0.65rem; }
+  .outlook-cell-wave { font-size: 0.62rem; }
+  .settings-panel { width: calc(100vw - 24px); top: 56px; right: 12px; left: 12px; }
+}
