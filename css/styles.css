@@ -366,6 +366,12 @@ body.is-loading { opacity: 0.7; }
 .tt-time { color: var(--accent); margin-bottom: 4px; }
 .tt-phrase { margin-bottom: 6px; }
 .tt-numbers { color: var(--text-dim); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.tt-factors { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); display: grid; gap: 4px; }
+.tt-factor { display: grid; grid-template-columns: 40px 1fr 28px; gap: 6px; align-items: center; font-size: 0.72rem; color: var(--text-dim); }
+.tt-factor-label { font-weight: 600; }
+.tt-factor-track { background: var(--bg); height: 6px; border-radius: 3px; overflow: hidden; }
+.tt-factor-fill { height: 100%; border-radius: 3px; }
+.tt-factor-pct { text-align: right; font-variant-numeric: tabular-nums; }
 .badge-surfline,
 .badge-predicted {
   display: inline-block;

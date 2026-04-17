@@ -238,15 +238,27 @@
     } else if (conditions.waveSource === 'surfline') {
       srcBadge = '<span class="badge-surfline">Surfline</span>';
     }
+    var factorsHtml = '';
+    if (win.factors) {
+      var f = win.factors;
+      factorsHtml = '<div class="tt-factors">' +
+        factorBar('Swell', f.swell) +
+        factorBar('Wind', f.wind) +
+        factorBar('Tide', f.tide) +
+        factorBar('Time', f.time) +
+      '</div>';
+    }
+
     tip.innerHTML =
       '<div class="tt-spot">' + escapeHTML(spot.name) + ' ' + srcBadge + '</div>' +
-      '<div class="tt-time">' + window.Describe.hourRange(winDate, sessionEnd) + '</div>' +
+      '<div class="tt-time">' + window.Describe.hourRange(winDate, sessionEnd) + ' · score ' + win.score + '</div>' +
       '<div class="tt-phrase">' + escapeHTML(phrase || '—') + '</div>' +
       '<div class="tt-numbers">' +
         (conditions.waveHeight != null ? conditions.waveHeight.toFixed(1) + 'ft @ ' + (conditions.swellPeriod || '?') + 's ' + (conditions.swellDirectionCompass || '') : '—') +
         ' · ' +
         (conditions.windSpeed != null ? Math.round(conditions.windSpeed) + 'mph ' + (conditions.windDirectionCompass || '') : '—') +
-      '</div>';
+      '</div>' +
+      factorsHtml;
 
     var rect = anchor.getBoundingClientRect();
     tip.style.position = 'fixed';
@@ -377,6 +389,16 @@
       }
     }
     return null;
+  }
+
+  function factorBar(label, value) {
+    var pct = Math.round((value || 0) * 100);
+    var color = pct >= 65 ? '#00d4aa' : (pct >= 40 ? '#f59e0b' : '#ef4444');
+    return '<div class="tt-factor">' +
+      '<span class="tt-factor-label">' + label + '</span>' +
+      '<div class="tt-factor-track"><div class="tt-factor-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+      '<span class="tt-factor-pct">' + pct + '</span>' +
+    '</div>';
   }
 
   function shortName(name) {
