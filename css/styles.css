@@ -288,11 +288,12 @@ body.is-loading { opacity: 0.7; }
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
 }
-.outlook-cell-temp {
+.outlook-cell-meta {
   font-size: 0.62rem;
-  opacity: 0.75;
+  opacity: 0.8;
   font-variant-numeric: tabular-nums;
   line-height: 1.0;
+  white-space: nowrap;
 }
 
 /* ----- Settings panel ----- */
@@ -391,8 +392,9 @@ body.is-loading { opacity: 0.7; }
   .hero { grid-template-columns: 1fr; }
   .hero-spot { font-size: 1.2rem; }
   .now-strip { font-size: 0.85rem; gap: 10px; }
-  .outlook-cell { height: 44px; }
+  .outlook-cell { height: 52px; }
   .outlook-cell-spot { font-size: 0.65rem; }
   .outlook-cell-wave { font-size: 0.62rem; }
+  .outlook-cell-meta { font-size: 0.58rem; }
   .settings-panel { width: calc(100vw - 24px); top: 56px; right: 12px; left: 12px; }
 }

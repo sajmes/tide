@@ -138,6 +138,7 @@
 
     var bestPerCell = collectBestPerCell(filteredScoredWindows, this._spotsById, startDate);
     var airTempByCell = buildAirTempLookup(state.windSwellDataBySpot, startDate);
+    var tideByCell = buildTideLookup(state.tideDataBySpot, state.tideService, startDate);
     var showSpotName = selectedSpotId === 'all';
 
     var html = '<table class="outlook-table"><thead><tr><th class="outlook-corner"></th>';
@@ -160,25 +161,25 @@
         var key = di + '-' + h;
         var slot = bestPerCell[key];
         var weekendCell = ((startDate.getDay() + di) % 7 === 0 || (startDate.getDay() + di) % 7 === 6) ? ' is-weekend' : '';
+        var airTemp = airTempByCell[di + '-' + h];
+        var tide = tideByCell[di + '-' + h];
+        var metaStr = formatCellMeta(tide, airTemp);
         if (slot) {
           var cls = 'cell-' + slot.window.rating + weekendCell;
           var spotShort = shortName(slot.spot.name);
           var waveStr = slot.window.conditions && slot.window.conditions.waveHeight != null
             ? slot.window.conditions.waveHeight.toFixed(1) + 'ft'
             : '';
-          var airTemp = airTempByCell[di + '-' + h];
-          var tempStr = airTemp != null ? Math.round(airTemp) + '°' : '';
           var spotLine = showSpotName ? '<div class="outlook-cell-spot">' + escapeHTML(spotShort) + '</div>' : '';
-          var tempLine = tempStr ? '<div class="outlook-cell-temp">' + tempStr + '</div>' : '';
+          var metaLine = metaStr ? '<div class="outlook-cell-meta">' + metaStr + '</div>' : '';
           html += '<td class="outlook-cell ' + cls + '" data-day="' + di + '" data-hour="' + h + '" data-spot="' + slot.spot.id + '">' +
             spotLine +
             '<div class="outlook-cell-wave">' + waveStr + '</div>' +
-            tempLine +
+            metaLine +
           '</td>';
         } else {
-          var airTemp2 = airTempByCell[di + '-' + h];
-          var tempStr2 = airTemp2 != null ? '<div class="outlook-cell-temp">' + Math.round(airTemp2) + '°</div>' : '';
-          html += '<td class="outlook-cell cell-empty' + weekendCell + '">' + tempStr2 + '</td>';
+          var emptyMeta = metaStr ? '<div class="outlook-cell-meta">' + metaStr + '</div>' : '';
+          html += '<td class="outlook-cell cell-empty' + weekendCell + '">' + emptyMeta + '</td>';
         }
       }
       html += '</tr>';
@@ -331,6 +332,42 @@
       }
     }
     return best;
+  }
+
+  // Compact "1.2↑ 65°" meta string for cell footers.
+  function formatCellMeta(tide, airTemp) {
+    var parts = [];
+    if (tide && tide.height != null) {
+      var arrow = tide.movement === 'incoming' ? '↑' : (tide.movement === 'outgoing' ? '↓' : '');
+      parts.push(tide.height.toFixed(1) + arrow);
+    }
+    if (airTemp != null) parts.push(Math.round(airTemp) + '°');
+    return parts.join(' ');
+  }
+
+  // All SD spots share the same NOAA station, so any spot's tide data works.
+  function buildTideLookup(tideDataBySpot, tideService, startDate) {
+    var lookup = {};
+    if (!tideDataBySpot || !tideService) return lookup;
+    var spotIds = Object.keys(tideDataBySpot);
+    var predictions = null;
+    for (var i = 0; i < spotIds.length; i++) {
+      var p = tideDataBySpot[spotIds[i]];
+      if (p && p.length > 0) { predictions = p; break; }
+    }
+    if (!predictions) return lookup;
+    for (var d = 0; d < FORECAST_DAYS; d++) {
+      for (var hi = 0; hi < KEY_HOURS.length; hi++) {
+        var hour = KEY_HOURS[hi];
+        var t = new Date(startDate);
+        t.setDate(startDate.getDate() + d);
+        t.setHours(hour, 0, 0, 0);
+        var height = tideService.getTideAtTime(predictions, t);
+        var movement = tideService.getTideMovement(predictions, t);
+        if (height != null) lookup[d + '-' + hour] = { height: height, movement: movement };
+      }
+    }
+    return lookup;
   }
 
   // Air temp is essentially identical across the SD spots — pull from the first
